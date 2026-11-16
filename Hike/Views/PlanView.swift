@@ -6,7 +6,11 @@ import SwiftUI
 @MainActor
 final class PlanModel: ObservableObject {
     @Published private(set) var waypoints: [GeoPoint] = []
-    @Published private(set) var route: PlannedRoute?
+    @Published private(set) var route: PlannedRoute? {
+        didSet { samples = route.map { ElevationProfile.samples(for: $0.points) } ?? [] }
+    }
+    /// Elevation profile of the current route, computed once per route.
+    @Published private(set) var samples: [ElevationSample] = []
     @Published private(set) var isRouting = false
     @Published var errorMessage: String?
 
@@ -147,9 +151,9 @@ struct PlanView: View {
         return [MapLine(id: "plan", points: route.points, style: .route)]
     }
 
-    private var mapPins: [MapPin] {
+    private var mapPins: [HikePin] {
         model.waypoints.enumerated().map { index, point in
-            MapPin(id: "wp-\(index)", point: point, label: String(index + 1))
+            HikePin(id: "wp-\(index)", point: point, label: String(index + 1))
         }
     }
 
@@ -293,9 +297,8 @@ struct PlanView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
         }
 
-        let samples = ElevationProfile.samples(for: route.points)
-        if samples.count > 2 {
-            ElevationChart(samples: samples)
+        if model.samples.count > 2 {
+            ElevationChart(samples: model.samples)
                 .frame(height: 92)
         }
 
@@ -323,7 +326,8 @@ struct PlanView: View {
             : trimmed
         let hike = SavedHike(name: name, kind: .planned, points: route.points, waypoints: model.waypoints)
         modelContext.insert(hike)
-        showSavedConfirmation = true
+        // The name prompt is still closing; show the confirmation once it is gone.
+        DispatchQueue.main.async { showSavedConfirmation = true }
     }
 
     private func searchPlace() {

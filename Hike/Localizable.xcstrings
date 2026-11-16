@@ -431,6 +431,16 @@
         }
       }
     },
+    "min": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "min"
+          }
+        }
+      }
+    },
     "More": {
       "localizations": {
         "nl": {

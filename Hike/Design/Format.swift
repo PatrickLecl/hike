@@ -30,7 +30,7 @@ enum Format {
         let totalMinutes = Int((seconds / 60).rounded())
         let hours = totalMinutes / 60
         let minutes = totalMinutes % 60
-        if hours == 0 { return "\(minutes) min" }
+        if hours == 0 { return "\(minutes) \(String(localized: "min", comment: "Abbreviation for minutes"))" }
         let hourSymbol = String(localized: "h", comment: "Abbreviation for hours, as in 4 h 35")
         return "\(hours) \(hourSymbol) \(String(format: "%02d", minutes))"
     }

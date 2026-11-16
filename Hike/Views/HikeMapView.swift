@@ -36,7 +36,7 @@ struct MapLine: Identifiable, Equatable {
 }
 
 /// A numbered marker on the map.
-struct MapPin: Identifiable, Equatable {
+struct HikePin: Identifiable, Equatable {
     let id: String
     let point: GeoPoint
     let label: String
@@ -67,7 +67,7 @@ struct MapFocus: Equatable {
 struct HikeMapView: UIViewRepresentable {
     var layer: MapLayer = .outdoor
     var lines: [MapLine] = []
-    var pins: [MapPin] = []
+    var pins: [HikePin] = []
     var showsUser: Bool = false
     var focus: MapFocus?
     var bottomInset: CGFloat = 0
@@ -98,11 +98,11 @@ struct HikeMapView: UIViewRepresentable {
         let tap = UITapGestureRecognizer(target: context.coordinator, action: #selector(Coordinator.handleTap(_:)))
         tap.delegate = context.coordinator
         // Let the map's own double-tap zoom win over our single tap.
-        for view in mapView.subviews {
-            for recognizer in view.gestureRecognizers ?? [] {
-                if let doubleTap = recognizer as? UITapGestureRecognizer, doubleTap.numberOfTapsRequired == 2 {
-                    tap.require(toFail: doubleTap)
-                }
+        let recognizers = (mapView.gestureRecognizers ?? [])
+            + mapView.subviews.flatMap { $0.gestureRecognizers ?? [] }
+        for recognizer in recognizers {
+            if let doubleTap = recognizer as? UITapGestureRecognizer, doubleTap.numberOfTapsRequired == 2 {
+                tap.require(toFail: doubleTap)
             }
         }
         mapView.addGestureRecognizer(tap)
@@ -136,7 +136,7 @@ struct HikeMapView: UIViewRepresentable {
         let coordinate: CLLocationCoordinate2D
         let label: String
 
-        init(pin: MapPin) {
+        init(pin: HikePin) {
             coordinate = pin.point.coordinate
             label = pin.label
         }
@@ -151,7 +151,7 @@ struct HikeMapView: UIViewRepresentable {
         private var tileOverlay: CachedTileOverlay?
         private var currentLines: [MapLine] = []
         private var lineOverlays: [String: StyledPolyline] = [:]
-        private var currentPins: [MapPin] = []
+        private var currentPins: [HikePin] = []
 
         init(_ parent: HikeMapView) {
             self.parent = parent
@@ -207,7 +207,7 @@ struct HikeMapView: UIViewRepresentable {
             currentLines = lines
         }
 
-        func apply(pins: [MapPin], to mapView: MKMapView) {
+        func apply(pins: [HikePin], to mapView: MKMapView) {
             guard pins != currentPins else { return }
             currentPins = pins
             mapView.removeAnnotations(mapView.annotations.filter { $0 is PinAnnotation })

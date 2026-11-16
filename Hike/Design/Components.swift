@@ -50,9 +50,11 @@ struct ContourBackground: View {
     var body: some View {
         Canvas { context, size in
             let offset = Double(seed % 7) * 0.9
-            let centers = [
-                CGPoint(x: size.width * (0.28 + 0.05 * sin(offset)), y: size.height * 0.35),
-                CGPoint(x: size.width * 0.78, y: size.height * (0.7 + 0.06 * cos(offset))),
+            let shiftX = CGFloat(0.28 + 0.05 * sin(offset))
+            let shiftY = CGFloat(0.7 + 0.06 * cos(offset))
+            let centers: [CGPoint] = [
+                CGPoint(x: size.width * shiftX, y: size.height * 0.35),
+                CGPoint(x: size.width * 0.78, y: size.height * shiftY),
             ]
             for (centerIndex, center) in centers.enumerated() {
                 for ring in 1...6 {
@@ -61,9 +63,9 @@ struct ContourBackground: View {
                     let steps = 72
                     for step in 0...steps {
                         let angle = Double(step) / Double(steps) * 2 * .pi
-                        let wobble = 1
-                            + 0.13 * sin(angle * 3 + offset + Double(centerIndex) * 1.7)
-                            + 0.07 * cos(angle * 5 - offset + Double(ring) * 0.6)
+                        let wobbleA: Double = 0.13 * sin(angle * 3 + offset + Double(centerIndex) * 1.7)
+                        let wobbleB: Double = 0.07 * cos(angle * 5 - offset + Double(ring) * 0.6)
+                        let wobble: Double = 1 + wobbleA + wobbleB
                         let point = CGPoint(
                             x: center.x + CGFloat(cos(angle) * radius * wobble * 1.25),
                             y: center.y + CGFloat(sin(angle) * radius * wobble)

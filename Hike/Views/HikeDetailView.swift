@@ -13,6 +13,7 @@ struct HikeDetailView: View {
 
     @State private var points: [GeoPoint] = []
     @State private var waypoints: [GeoPoint] = []
+    @State private var samples: [ElevationSample] = []
     @State private var focus: MapFocus?
     @State private var gpxURL: URL?
     @State private var downloadProgress: Double?
@@ -23,14 +24,14 @@ struct HikeDetailView: View {
 
     private var layer: MapLayer { MapLayer(rawValue: layerRaw) ?? .outdoor }
 
-    private var pins: [MapPin] {
+    private var pins: [HikePin] {
         guard let first = points.first, let last = points.last else { return [] }
         if Geo.distance(first, last) < 30 {
-            return [MapPin(id: "start", point: first, label: "A")]
+            return [HikePin(id: "start", point: first, label: "A")]
         }
         return [
-            MapPin(id: "start", point: first, label: "A"),
-            MapPin(id: "end", point: last, label: "B"),
+            HikePin(id: "start", point: first, label: "A"),
+            HikePin(id: "end", point: last, label: "B"),
         ]
     }
 
@@ -74,7 +75,6 @@ struct HikeDetailView: View {
 
                 statistics
 
-                let samples = ElevationProfile.samples(for: points)
                 if samples.count > 2 {
                     ElevationChart(samples: samples, tint: hike.kind == .recorded ? Theme.glacier : Theme.blaze)
                         .frame(height: 140)
@@ -217,6 +217,7 @@ struct HikeDetailView: View {
         guard points.isEmpty else { return }
         points = hike.points
         waypoints = hike.waypoints
+        samples = ElevationProfile.samples(for: points)
         if let box = Geo.boundingBox(of: points) {
             focus = .box(box)
         }
@@ -226,7 +227,9 @@ struct HikeDetailView: View {
         if !hike.hasElevation, ElevationService.isAvailable,
            points.count <= OpenRouteService.elevationPointLimit,
            let enriched = await ElevationService.elevations(for: points), enriched.count == points.count {
+            guard hike.modelContext != nil, !hike.isDeleted else { return }
             points = enriched
+            samples = ElevationProfile.samples(for: enriched)
             hike.updatePoints(enriched)
             gpxURL = HikeImporter.exportGPX(hike)
         }
@@ -240,6 +243,8 @@ struct HikeDetailView: View {
             downloadProgress = Double(finished) / Double(max(total, 1))
         }
         downloadProgress = nil
+        // The hike may have been deleted while the tiles were downloading.
+        guard hike.modelContext != nil, !hike.isDeleted else { return }
         // A handful of missing tiles is tolerable; more means the map has real gaps.
         if failed > tiles.count / 20 {
             downloadIncomplete = true
