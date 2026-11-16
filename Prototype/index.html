@@ -1,0 +1,675 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hike – web-prototype</title>
+<link rel="stylesheet" href="vendor/leaflet.css">
+<style>
+@font-face { font-family: "Hike Serif"; font-weight: 600; src: url("vendor/source-serif-4-latin-600-normal.woff2") format("woff2"); }
+@font-face { font-family: "Hike Serif"; font-weight: 700; src: url("vendor/source-serif-4-latin-700-normal.woff2") format("woff2"); }
+@font-face { font-family: "Hike Sans"; font-weight: 400; src: url("vendor/inter-latin-400-normal.woff2") format("woff2"); }
+@font-face { font-family: "Hike Sans"; font-weight: 500; src: url("vendor/inter-latin-500-normal.woff2") format("woff2"); }
+@font-face { font-family: "Hike Sans"; font-weight: 600; src: url("vendor/inter-latin-600-normal.woff2") format("woff2"); }
+
+:root {
+  --paper: #F3EEE3; --card: #FBF8F1; --ink: #14231C; --ink-soft: #5B665F; --line: #DDD5C5;
+  --blaze: #E5482D; --moss: #5E7A4E; --moss-tint: #DFE6D2; --glacier: #2F7F8C; --sun: #F0B54A;
+  --spruce: #14231C; --spruce-raised: #1E3229; --chalk: #F3EEE3; --chalk-soft: #A3AEA6;
+  --serif: "Hike Serif", Georgia, serif; --sans: "Hike Sans", system-ui, sans-serif;
+}
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body { margin: 0; height: 100%; background: #E9E2D3; font-family: var(--sans); color: var(--ink); }
+button { font: inherit; color: inherit; border: 0; background: none; padding: 0; cursor: pointer; }
+input { font: inherit; color: inherit; border: 0; background: none; outline: none; min-width: 0; }
+
+#stage { width: 540px; height: 960px; margin: 0 auto; position: relative; overflow: hidden;
+  background: radial-gradient(120% 80% at 50% 0%, #F3EEE3 0%, #E6DECD 100%); }
+#phone { position: absolute; left: 75px; top: 8px; width: 390px; height: 844px; border-radius: 46px; overflow: hidden;
+  background: var(--paper); box-shadow: 0 0 0 5px #0d1712, 0 18px 40px rgba(20,35,28,.28); }
+#caption { position: absolute; left: 0; right: 0; top: 866px; text-align: center; padding: 0 28px; }
+#caption .main { font-family: var(--serif); font-weight: 600; font-size: 21px; line-height: 1.2; min-height: 26px; transition: opacity .25s; }
+#caption .sub { margin-top: 8px; font-size: 11.5px; color: var(--ink-soft); letter-spacing: .02em; }
+
+#statusbar { position: absolute; z-index: 900; top: 0; left: 0; right: 0; height: 47px; display: flex; align-items: flex-end;
+  justify-content: space-between; padding: 0 30px 7px; font-weight: 600; font-size: 15px; pointer-events: none; }
+#statusbar .island { position: absolute; left: 50%; top: 11px; width: 112px; height: 31px; margin-left: -56px; border-radius: 16px; background: #000; }
+#statusbar svg { display: block; }
+#phone.dark #statusbar { color: var(--chalk); }
+
+.screen { position: absolute; inset: 0 0 83px 0; display: none; flex-direction: column; background: var(--paper); }
+.screen.active { display: flex; }
+/* Keeps scrolled content from showing through behind the status bar. */
+.screen.fill::before { content: ""; position: absolute; z-index: 550; top: 0; left: 0; right: 0; height: 47px; background: var(--paper); }
+.scroll { flex: 1; overflow-y: auto; padding: 55px 20px 22px; scrollbar-width: none; }
+.scroll::-webkit-scrollbar { display: none; }
+
+#tabbar { position: absolute; z-index: 800; left: 0; right: 0; bottom: 0; height: 83px; display: flex; padding: 9px 6px 0;
+  background: rgba(243,238,227,.96); border-top: 1px solid var(--line); }
+#tabbar button { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 10.5px; font-weight: 500; color: var(--ink); height: 46px; }
+#tabbar button.active { color: var(--blaze); }
+#phone.dark #tabbar { background: var(--spruce); border-top-color: var(--spruce-raised); }
+#phone.dark #tabbar button { color: var(--chalk-soft); }
+#phone.dark #tabbar button.active { color: #F05A3E; }
+#home { position: absolute; z-index: 950; left: 50%; bottom: 8px; width: 134px; height: 5px; margin-left: -67px; border-radius: 3px; background: var(--ink); opacity: .9; pointer-events: none; }
+#phone.dark #home { background: var(--chalk); }
+
+h1.title { font-family: var(--serif); font-weight: 700; font-size: 38px; line-height: 1.05; margin: 0; letter-spacing: -.01em; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 18px; }
+.blaze { display: inline-flex; flex-direction: column; width: 36px; border-radius: 3px; overflow: hidden; border: 1px solid var(--line); flex: none; }
+.blaze i { display: block; height: 7px; background: var(--chalk); }
+.blaze i:nth-child(2) { background: var(--accent, var(--blaze)); }
+.stat .v { font-family: var(--serif); font-weight: 600; font-size: 24px; line-height: 1; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.stat .v small { font-family: var(--sans); font-weight: 500; font-size: 12px; margin-left: 3px; }
+.stat .l { margin-top: 5px; font-size: 10px; font-weight: 600; letter-spacing: .09em; text-transform: uppercase; color: var(--ink-soft); }
+.stats { display: flex; }
+.stats .stat { flex: 1; }
+.btn-primary { display: block; width: 100%; padding: 16px; border-radius: 16px; background: var(--ink); color: var(--paper);
+  font-family: var(--serif); font-weight: 600; font-size: 18px; text-align: center; }
+.btn-secondary { display: flex; width: 100%; align-items: center; justify-content: center; gap: 8px; padding: 14px; border-radius: 16px;
+  background: var(--card); border: 1px solid var(--line); font-weight: 600; font-size: 16px; }
+.btn-primary:active, .btn-secondary:active { opacity: .75; }
+.tag { display: inline-flex; align-items: center; gap: 4px; padding: 4px 8px; border-radius: 7px; font-size: 12px; font-weight: 500;
+  background: rgba(221,213,197,.5); color: var(--ink-soft); }
+.tag.moss { background: var(--moss-tint); color: var(--moss); }
+.mapbtn { width: 44px; height: 44px; border-radius: 50%; background: var(--card); border: 1px solid var(--line);
+  display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(0,0,0,.12); }
+.attribution { position: absolute; z-index: 500; left: 6px; bottom: 6px; font-size: 8.5px; color: rgba(0,0,0,.7);
+  background: rgba(255,255,255,.7); padding: 2px 5px; border-radius: 4px; pointer-events: none; }
+.leaflet-container { background: #E4E0D3; font-family: var(--sans); }
+.pin { width: 28px; height: 28px; border-radius: 50%; background: var(--blaze); border: 2.5px solid var(--chalk); color: #fff;
+  font-weight: 700; font-size: 13px; display: flex; align-items: center; justify-content: center; box-shadow: 0 1px 4px rgba(0,0,0,.35); }
+.me { width: 20px; height: 20px; border-radius: 50%; background: #2F7BF5; border: 3px solid #fff; box-shadow: 0 0 0 7px rgba(47,123,245,.22), 0 1px 4px rgba(0,0,0,.4); }
+.search { display: flex; align-items: center; gap: 8px; height: 46px; padding: 0 14px; background: var(--card); border: 1px solid var(--line); border-radius: 14px; }
+.search input { flex: 1; font-size: 16px; }
+.search input::placeholder { color: #9aa39c; }
+.hint { font-size: 15px; color: var(--ink-soft); }
+.back { position: absolute; z-index: 600; top: 52px; left: 14px; }
+.spinner { width: 18px; height: 18px; border-radius: 50%; border: 2.5px solid var(--line); border-top-color: var(--ink-soft); animation: spin .8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Plan */
+#plan-map { position: absolute; inset: 0; }
+#plan-top { position: absolute; z-index: 500; top: 54px; left: 14px; right: 14px; display: flex; gap: 10px; align-items: flex-start; }
+#plan-top .search { flex: 1; height: 44px; border-radius: 22px; box-shadow: 0 2px 6px rgba(0,0,0,.12); }
+#plan-top .col { display: flex; flex-direction: column; gap: 10px; }
+#plan-panel { position: absolute; z-index: 500; left: 0; right: 0; bottom: 0; padding: 18px 20px 14px; background: var(--paper);
+  border-radius: 26px 26px 0 0; box-shadow: 0 -2px 12px rgba(0,0,0,.14); }
+#plan-panel .head { display: flex; align-items: center; gap: 16px; margin-bottom: 12px; }
+#plan-panel h2 { font-family: var(--serif); font-weight: 700; font-size: 30px; margin: 0; flex: none; }
+#plan-panel .tools { margin-left: auto; display: flex; gap: 18px; }
+#plan-attr { position: absolute; z-index: 499; left: 6px; }
+
+/* Discover */
+.chips { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; margin: 0 -20px; padding: 0 20px; }
+.chips button { flex: none; padding: 8px 14px; border-radius: 20px; font-size: 14px; font-weight: 500; background: var(--card); border: 1px solid var(--line); }
+.chips button.on { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+#disc-map-wrap { position: relative; height: 200px; border-radius: 18px; overflow: hidden; border: 1px solid var(--line); }
+#disc-map { position: absolute; inset: 0; }
+#disc-reload { position: absolute; z-index: 500; left: 50%; bottom: 22px; transform: translateX(-50%); white-space: nowrap; padding: 10px 16px;
+  border-radius: 20px; background: var(--ink); color: var(--paper); font-size: 14px; font-weight: 600; }
+.row { display: flex; align-items: center; gap: 14px; padding: 14px; width: 100%; text-align: left; margin-bottom: 10px; }
+.row .name { font-family: var(--serif); font-weight: 600; font-size: 18px; line-height: 1.2; }
+.row .sub { margin-top: 4px; font-size: 14px; color: var(--ink-soft); }
+.row .meta { margin-top: 4px; font-size: 13px; display: flex; gap: 8px; }
+.row .meta b { font-weight: 600; }
+.row .chev { margin-left: auto; flex: none; }
+.vstack > * + * { margin-top: 16px; }
+
+/* Detail pages */
+.detail-map { position: relative; height: 300px; border-radius: 18px; overflow: hidden; border: 1px solid var(--line); }
+.detail-map > .map { position: absolute; inset: 0; }
+.detail h2 { font-family: var(--serif); font-weight: 700; font-size: 28px; line-height: 1.12; margin: 0; }
+.facts { padding: 16px; font-size: 15px; }
+.facts div { display: flex; gap: 12px; padding: 4px 0; }
+.facts span { width: 104px; flex: none; color: var(--ink-soft); font-size: 14px; }
+.thumb { width: 84px; height: 84px; border-radius: 12px; border: 1px solid var(--line); overflow: hidden; flex: none; background: #E9EDDD; }
+.note { font-size: 12px; color: var(--ink-soft); }
+
+/* Record */
+#s-record { background: var(--spruce); color: var(--chalk); }
+#rec-map { flex: 1; position: relative; }
+#rec-map .map { position: absolute; inset: 0; }
+#rec-pill { position: absolute; z-index: 500; top: 54px; left: 14px; display: flex; align-items: center; gap: 8px; padding: 9px 12px; border-radius: 20px;
+  background: rgba(20,35,28,.92); font-size: 14px; font-weight: 600; max-width: 250px; }
+#rec-pill span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#rec-pill .blaze { width: 22px; border-color: transparent; }
+#rec-pill .blaze i { height: 4.5px; }
+#rec-panel { padding: 20px 20px 18px; }
+#rec-panel .stat .l { color: var(--chalk-soft); }
+#rec-panel .big .v { font-size: 54px; }
+#rec-panel .big .v small { font-size: 27px; }
+#rec-panel .mid .v { font-size: 34px; }
+#rec-panel .mid .v small { font-size: 17px; }
+#rec-panel hr { border: 0; border-top: 1px solid var(--spruce-raised); margin: 12px 0; }
+#rec-controls { margin-top: 18px; display: flex; gap: 12px; justify-content: center; align-items: center; min-height: 76px; }
+.btn-blaze { flex: 1; padding: 16px; border-radius: 16px; background: var(--blaze); color: #fff; font-family: var(--serif); font-weight: 600; font-size: 18px; }
+.btn-dark { flex: 1; padding: 16px; border-radius: 16px; background: var(--spruce-raised); color: var(--chalk); font-weight: 600; font-size: 16px; }
+.btn-round { width: 76px; height: 76px; border-radius: 50%; background: var(--blaze); display: flex; align-items: center; justify-content: center; }
+
+/* Alert */
+#alert { position: absolute; z-index: 1000; inset: 0; display: none; align-items: center; justify-content: center; background: rgba(0,0,0,.28); }
+#alert.show { display: flex; }
+#alert .box { width: 274px; border-radius: 16px; background: rgba(250,248,243,.98); text-align: center; overflow: hidden; }
+#alert .body { padding: 20px 16px 16px; }
+#alert .t { font-weight: 600; font-size: 17px; }
+#alert .m { margin-top: 6px; font-size: 13px; line-height: 1.35; }
+#alert input { margin-top: 14px; width: 100%; padding: 8px 10px; border-radius: 8px; border: 1px solid #cfc8b9; background: #fff; font-size: 14px; }
+#alert .actions { display: flex; border-top: 1px solid #d9d2c3; }
+#alert .actions button { flex: 1; padding: 12px 4px; font-size: 17px; color: var(--blaze); }
+#alert .actions button + button { border-left: 1px solid #d9d2c3; }
+#alert .actions button.strong { font-weight: 600; }
+
+#touch { position: fixed; z-index: 5000; left: 0; top: 0; width: 34px; height: 34px; margin: -17px 0 0 -17px; border-radius: 50%; pointer-events: none;
+  background: rgba(20,35,28,.22); border: 2px solid rgba(255,255,255,.85); opacity: 0; transition: opacity .2s, transform .12s; }
+#touch.on { opacity: 1; }
+#touch.down { transform: scale(.72); background: rgba(229,72,45,.45); }
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="phone">
+    <div id="statusbar">
+      <span>9:41</span><div class="island"></div>
+      <svg width="66" height="14" viewBox="0 0 66 14" fill="currentColor"><rect x="0" y="9" width="3" height="4" rx="1"/><rect x="5" y="6.5" width="3" height="6.5" rx="1"/><rect x="10" y="4" width="3" height="9" rx="1"/><rect x="15" y="1" width="3" height="12" rx="1"/><path d="M31 3.2c2.3 0 4.4.9 6 2.4l-1.2 1.3a6.9 6.9 0 0 0-9.6 0L25 5.6a8.7 8.7 0 0 1 6-2.4zm0 3.6c1.3 0 2.5.5 3.4 1.400l-1.3 1.300a3 3 0 0 0-4.2 0l-1.3-1.300c.9-.9 2.1-1.4 3.4-1.400zm0 3.4 1.5 1.6-1.5 1.6-1.5-1.600z"/><rect x="43" y="1.5" width="20" height="11" rx="3.5" fill="none" stroke="currentColor" opacity=".45"/><rect x="45" y="3.5" width="16" height="7" rx="2"/><rect x="64" y="5" width="1.6" height="4" rx=".8" opacity=".5"/></svg>
+    </div>
+
+    <!-- Plannen -->
+    <section class="screen active" id="s-plan">
+      <div id="plan-map"></div>
+      <div id="plan-top">
+        <div class="search">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#5B665F" stroke-width="2.4" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+          <input id="plan-search" placeholder="Zoek een plaats" autocomplete="off" spellcheck="false">
+          <div id="plan-search-busy" class="spinner" style="display:none"></div>
+        </div>
+        <div class="col">
+          <button class="mapbtn" aria-label="Kaart"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#14231C" stroke-width="2" stroke-linejoin="round"><path d="m12 3 9 5-9 5-9-5z"/><path d="m3 13 9 5 9-5"/></svg></button>
+          <button class="mapbtn" aria-label="Mijn locatie"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#14231C" stroke-width="2.2" stroke-linejoin="round"><path d="M21 3 3 10.500l7.5 3L13.5 21z"/></svg></button>
+        </div>
+      </div>
+      <div id="plan-attr" class="attribution">© OpenStreetMap-bijdragers, SRTM · © OpenTopoMap (CC-BY-SA)</div>
+      <div id="plan-panel">
+        <div class="head">
+          <h2>Plannen</h2><div id="plan-busy" class="spinner" style="display:none"></div>
+          <div class="tools" id="plan-tools" style="display:none">
+            <button id="plan-undo" aria-label="Laatste punt ongedaan maken"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#14231C" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14 4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/></svg></button>
+            <button id="plan-clear" aria-label="Route wissen"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#E5482D" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg></button>
+          </div>
+        </div>
+        <div id="plan-body"></div>
+      </div>
+    </section>
+
+    <!-- Ontdekken -->
+    <section class="screen fill" id="s-discover">
+      <div class="scroll vstack">
+        <h1 class="title">Ontdekken</h1>
+        <div class="search">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#5B665F" stroke-width="2.4" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+          <input id="disc-search" placeholder="Zoek wandelroutes" autocomplete="off" spellcheck="false">
+        </div>
+        <div id="disc-map-wrap">
+          <div id="disc-map"></div>
+          <div class="attribution">© OpenStreetMap-bijdragers, SRTM · © OpenTopoMap (CC-BY-SA)</div>
+          <button id="disc-reload" style="display:none">↻&nbsp; Routes in dit gebied</button>
+        </div>
+        <div class="chips" id="disc-chips"></div>
+        <div id="disc-results"></div>
+      </div>
+    </section>
+
+    <!-- Routedetail -->
+    <section class="screen fill" id="s-trail">
+      <button class="mapbtn back" data-back="discover" aria-label="Terug"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#14231C" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="m15 5-7 7 7 7"/></svg></button>
+      <div class="scroll vstack detail" style="padding-top:52px">
+        <div class="detail-map"><div class="map" id="trail-map"></div><div class="attribution">© OpenStreetMap-bijdragers, SRTM · © OpenTopoMap (CC-BY-SA)</div></div>
+        <div id="trail-body" class="vstack"></div>
+      </div>
+    </section>
+
+    <!-- Opnemen -->
+    <section class="screen" id="s-record">
+      <div id="rec-map"><div class="map" id="record-map"></div>
+        <div id="rec-pill" style="display:none"><span class="blaze"><i></i><i></i><i></i></span><span id="rec-name"></span></div>
+      </div>
+      <div id="rec-panel">
+        <div class="stat big"><div class="v" id="rec-dist">0<small>m</small></div><div class="l">Afstand</div></div>
+        <hr>
+        <div class="stats">
+          <div class="stat mid"><div class="v" id="rec-time">0:00</div><div class="l">Tijd</div></div>
+          <div class="stat mid"><div class="v" id="rec-asc">0<small>m</small></div><div class="l">Totale stijging</div></div>
+        </div>
+        <div id="rec-controls"></div>
+      </div>
+    </section>
+
+    <!-- Mijn wandelingen -->
+    <section class="screen fill" id="s-library">
+      <div class="scroll vstack">
+        <div style="display:flex;align-items:baseline;gap:18px">
+          <h1 class="title" style="flex:1">Mijn wandelingen</h1>
+        </div>
+        <div id="lib-list"></div>
+      </div>
+    </section>
+
+    <!-- Wandelingdetail -->
+    <section class="screen fill" id="s-hike">
+      <button class="mapbtn back" data-back="library" aria-label="Terug"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#14231C" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="m15 5-7 7 7 7"/></svg></button>
+      <div class="scroll vstack detail" style="padding-top:52px">
+        <div class="detail-map" style="height:290px"><div class="map" id="hike-map"></div><div class="attribution">© OpenStreetMap-bijdragers, SRTM · © OpenTopoMap (CC-BY-SA)</div></div>
+        <div id="hike-body" class="vstack"></div>
+      </div>
+    </section>
+
+    <nav id="tabbar">
+      <button data-tab="plan" class="active"><svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="m3 6 6-2 6 2 6-2v14l-6 2-6-2-6 2z"/><path d="M9 4v14M15 6v14"/></svg>Plannen</button>
+      <button data-tab="discover"><svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>Ontdekken</button>
+      <button data-tab="record"><svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4" fill="currentColor" stroke="none"/></svg>Opnemen</button>
+      <button data-tab="library"><svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M6 3h12v18l-6-4.500L6 21z"/></svg>Mijn wandelingen</button>
+    </nav>
+    <div id="home"></div>
+
+    <div id="alert"><div class="box"><div class="body"><div class="t"></div><div class="m"></div><input style="display:none" autocomplete="off" spellcheck="false"></div><div class="actions"></div></div></div>
+  </div>
+  <div id="caption"><div class="main"></div><div class="sub">Web-prototype van de Hike-app · echte kaart-, route- en wandelpaddata</div></div>
+</div>
+<div id="touch"></div>
+
+<script src="vendor/leaflet.js"></script>
+<script>
+"use strict";
+// ?zoom=2 renders the whole page at double size, for sharp recordings.
+const ZOOM = Number(new URLSearchParams(location.search).get("zoom")) || 1;
+if (ZOOM !== 1) document.documentElement.style.zoom = ZOOM;
+// ---------- Geometry (same rules as the iOS app's Hike/Core) ----------
+const R = 6371008.8, MR = 6378137;
+const rad = d => d * Math.PI / 180;
+function dist(a, b) {
+  const h = Math.sin(rad(b.lat - a.lat) / 2) ** 2 + Math.cos(rad(a.lat)) * Math.cos(rad(b.lat)) * Math.sin(rad(b.lon - a.lon) / 2) ** 2;
+  return 2 * R * Math.asin(Math.min(1, Math.sqrt(h)));
+}
+function lengthOf(pts) { let t = 0; for (let i = 1; i < pts.length; i++) t += dist(pts[i - 1], pts[i]); return t; }
+function gain(pts, threshold = 3) {
+  let up = 0, down = 0, ref = null;
+  for (const p of pts) {
+    if (p.ele == null) continue;
+    if (ref == null) { ref = p.ele; continue; }
+    const d = p.ele - ref;
+    if (d >= threshold) { up += d; ref = p.ele; } else if (d <= -threshold) { down -= d; ref = p.ele; }
+  }
+  return { up, down };
+}
+function hikingSeconds(distance, up, down) {
+  const h = distance / 4000 * 3600, v = (up / 300 + down / 500) * 3600;
+  return Math.max(h, v) + Math.min(h, v) / 2;
+}
+const toMercator = p => ({ x: MR * rad(p.lon), y: MR * Math.log(Math.tan(Math.PI / 4 + rad(Math.max(Math.min(p.lat, 85.05), -85.05)) / 2)) });
+const fromMercator = (x, y) => ({ lat: (2 * Math.atan(Math.exp(y / MR)) - Math.PI / 2) * 180 / Math.PI, lon: x / MR * 180 / Math.PI });
+function profile(pts, max = 200) {
+  const all = []; let d = 0;
+  pts.forEach((p, i) => { if (i) d += dist(pts[i - 1], p); if (p.ele != null) all.push({ d, e: p.ele }); });
+  if (all.length <= max) return all;
+  const step = (all.length - 1) / (max - 1);
+  return Array.from({ length: max }, (_, i) => all[Math.min(Math.round(i * step), all.length - 1)]);
+}
+function describe(pts) {
+  const g = gain(pts), distance = lengthOf(pts), hasEle = pts.some(p => p.ele != null);
+  return { distance, up: g.up, down: g.down, hasEle, seconds: hikingSeconds(distance, g.up, g.down) };
+}
+
+// ---------- Formatting (Dutch) ----------
+const nf = (v, digits = 0) => v.toLocaleString("nl-NL", { minimumFractionDigits: digits, maximumFractionDigits: digits });
+const fmtDist = m => m < 1000 ? { v: nf(Math.round(m)), u: "m" } : { v: nf(m / 1000, m < 100000 ? 1 : 0), u: "km" };
+const fmtDur = s => { const t = Math.round(s / 60), h = Math.floor(t / 60), m = t % 60; return h ? `${h} u ${String(m).padStart(2, "0")}` : `${m} min`; };
+const fmtWatch = s => { s = Math.max(0, Math.floor(s)); const h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60), x = s % 60;
+  return h ? `${h}:${String(m).padStart(2, "0")}:${String(x).padStart(2, "0")}` : `${m}:${String(x).padStart(2, "0")}`; };
+const fmtDate = d => d.toLocaleDateString("nl-NL", { day: "numeric", month: "short", year: "numeric" });
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const stat = (label, value, unit = "") => `<div class="stat"><div class="v">${value}${unit ? `<small>${unit}</small>` : ""}</div><div class="l">${label}</div></div>`;
+const blaze = (accent, w = 36) => `<span class="blaze" style="width:${w}px;--accent:${accent}"><i></i><i></i><i></i></span>`;
+const chevron = `<svg class="chev" width="9" height="15" viewBox="0 0 9 15" fill="none" stroke="#5B665F" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m1.5 1.5 6 6-6 6"/></svg>`;
+
+function chartSVG(samples, w, h, color) {
+  const es = samples.map(s => s.e), lo0 = Math.min(...es), hi0 = Math.max(...es);
+  const step = hi0 - lo0 > 400 ? 200 : 50, lo = Math.floor(lo0 / step) * step, hi = Math.max(Math.ceil(hi0 / step) * step, lo + step * 2);
+  const L = 44, B = 16, T = 4, total = samples[samples.length - 1].d, X = d => L + d / total * (w - L - 2), Y = e => T + (1 - (e - lo) / (hi - lo)) * (h - T - B);
+  const line = samples.map((s, i) => `${i ? "L" : "M"}${X(s.d).toFixed(1)} ${Y(s.e).toFixed(1)}`).join("");
+  const id = "g" + Math.random().toString(36).slice(2, 8);
+  let grid = "";
+  for (const e of [lo, (lo + hi) / 2, hi]) grid += `<line x1="${L}" x2="${w}" y1="${Y(e)}" y2="${Y(e)}" stroke="#DDD5C5"/><text x="${L - 6}" y="${Y(e) + 3.5}" text-anchor="end">${nf(e)} m</text>`;
+  const km = total / 1000, tick = km > 40 ? 20 : km > 16 ? 5 : km > 6 ? 3 : 1;
+  for (let k = 0; k <= km; k += tick) grid += `<text x="${X(k * 1000)}" y="${h - 2}" text-anchor="${k ? "middle" : "start"}">${nf(k)} km</text>`;
+  return `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" style="display:block;font:10px var(--sans);fill:#5B665F"><defs><linearGradient id="${id}" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="${color}" stop-opacity=".28"/><stop offset="1" stop-color="${color}" stop-opacity=".04"/></linearGradient></defs>${grid}<path d="${line}L${X(total)} ${Y(lo)}L${L} ${Y(lo)}Z" fill="url(#${id})"/><path d="${line}" fill="none" stroke="${color}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/></svg>`;
+}
+function thumbSVG(pts, seed) {
+  const m = pts.map(toMercator), xs = m.map(p => p.x), ys = m.map(p => p.y);
+  const x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys);
+  const s = Math.min(60 / Math.max(x1 - x0, 1), 60 / Math.max(y1 - y0, 1)), ox = (84 - (x1 - x0) * s) / 2, oy = (84 - (y1 - y0) * s) / 2;
+  const stepN = Math.max(1, Math.floor(m.length / 120));
+  const d = m.filter((_, i) => i % stepN === 0 || i === m.length - 1).map((p, i) => `${i ? "L" : "M"}${(ox + (p.x - x0) * s).toFixed(1)} ${(oy + (y1 - p.y) * s).toFixed(1)}`).join("");
+  let rings = "";
+  for (let c = 0; c < 2; c++) for (let r = 1; r <= 6; r++) {
+    const cx = c ? 66 : 24 + (seed % 5), cy = c ? 60 : 28, rr = r * 7.5; let pth = "";
+    for (let k = 0; k <= 48; k++) { const a = k / 48 * 2 * Math.PI, wob = 1 + .13 * Math.sin(a * 3 + seed + c * 1.7) + .07 * Math.cos(a * 5 - seed + r * .6);
+      pth += `${k ? "L" : "M"}${(cx + Math.cos(a) * rr * wob * 1.250).toFixed(1)} ${(cy + Math.sin(a) * rr * wob).toFixed(1)}`; }
+    rings += `<path d="${pth}Z" fill="none" stroke="rgba(94,122,78,.35)" stroke-width=".8"/>`;
+  }
+  return `<svg class="thumb" viewBox="0 0 84 84">${rings}<path d="${d}" fill="none" stroke="#E5482D" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+}
+
+// ---------- Maps ----------
+const maps = {};
+function makeMap(id, options = {}) {
+  const map = L.map(id, { zoomControl: false, attributionControl: false, zoomSnap: 0.25, ...options });
+  L.tileLayer("tiles/{z}/{x}/{y}.png", { maxZoom: 17, keepBuffer: 3 }).addTo(map);
+  map.layers = L.layerGroup().addTo(map);
+  maps[id] = map;
+  return map;
+}
+const ll = p => [p.lat, p.lon];
+const routeLine = (pts, color = "#E5482D") => L.polyline(pts.map(ll), { color, weight: 5, lineCap: "round", lineJoin: "round", interactive: false });
+const pinIcon = label => L.divIcon({ className: "", html: `<div class="pin">${label}</div>`, iconSize: [28, 28], iconAnchor: [14, 14] });
+const bounds = pts => L.latLngBounds(pts.map(ll));
+
+// ---------- State ----------
+const state = { tab: "plan", waypoints: [], route: null, trails: [], network: null, discSearch: false, hikes: [], followed: null, rec: null };
+const $ = id => document.getElementById(id);
+
+function show(screen) {
+  document.querySelectorAll(".screen").forEach(s => s.classList.toggle("active", s.id === "s-" + screen));
+  const tab = { trail: "discover", hike: "library" }[screen] || screen;
+  state.tab = tab;
+  document.querySelectorAll("#tabbar button").forEach(b => b.classList.toggle("active", b.dataset.tab === tab));
+  $("phone").classList.toggle("dark", screen === "record");
+  const mapId = { plan: "plan-map", discover: "disc-map", trail: "trail-map", record: "record-map", hike: "hike-map" }[screen];
+  if (mapId && maps[mapId]) maps[mapId].invalidateSize();
+  if (screen === "discover" && discLoadedKey === null) setTimeout(loadArea, 60);
+  if (screen === "library") renderLibrary();
+  if (screen === "record") renderRecord();
+}
+document.querySelectorAll("#tabbar button").forEach(b => b.onclick = () => show(b.dataset.tab));
+document.querySelectorAll(".back").forEach(b => b.onclick = () => show(b.dataset.back));
+
+function alertBox({ title, message = "", input = null, buttons }) {
+  const box = $("alert"), field = box.querySelector("input");
+  box.querySelector(".t").textContent = title;
+  box.querySelector(".m").textContent = message;
+  box.querySelector(".m").style.display = message ? "" : "none";
+  field.style.display = input == null ? "none" : "";
+  field.value = ""; field.placeholder = input || "";
+  const actions = box.querySelector(".actions"); actions.innerHTML = "";
+  for (const b of buttons) {
+    const el = document.createElement("button");
+    el.textContent = b.label; if (b.strong) el.className = "strong";
+    el.onclick = () => { box.classList.remove("show"); b.action && b.action(field.value.trim()); };
+    actions.appendChild(el);
+  }
+  box.classList.add("show");
+  if (input != null) setTimeout(() => field.focus(), 50);
+}
+const getJSON = async url => { const r = await fetch(url); if (!r.ok) throw new Error(r.status); return r.json(); };
+
+// ---------- Plannen ----------
+const planMap = makeMap("plan-map").setView([49.5, 9.5], 4.250);
+planMap.on("click", e => { state.waypoints.push({ lat: e.latlng.lat, lon: e.latlng.lng }); recalc(); });
+$("plan-undo").onclick = () => { state.waypoints.pop(); recalc(); };
+$("plan-clear").onclick = () => { state.waypoints = []; recalc(); };
+let routeToken = 0;
+async function recalc() {
+  const token = ++routeToken, wps = state.waypoints;
+  if (wps.length < 2) { state.route = null; $("plan-busy").style.display = "none"; return renderPlan(); }
+  $("plan-busy").style.display = ""; renderPlan();
+  let points, failed = false;
+  try {
+    const data = await getJSON("api/route?pts=" + encodeURIComponent(wps.map(p => `${p.lon.toFixed(6)},${p.lat.toFixed(6)}`).join("|")));
+    points = data.features[0].geometry.coordinates.map(c => ({ lon: c[0], lat: c[1], ele: c.length > 2 ? c[2] : null }));
+  } catch (error) { points = wps.slice(); failed = true; }
+  if (token !== routeToken) return;
+  state.route = { points, failed, ...describe(points) };
+  $("plan-busy").style.display = "none"; renderPlan();
+}
+function renderPlan() {
+  const { waypoints: wps, route } = state;
+  planMap.layers.clearLayers();
+  if (route) routeLine(route.points).addTo(planMap.layers);
+  wps.forEach((p, i) => L.marker(ll(p), { icon: pinIcon(i + 1), interactive: false }).addTo(planMap.layers));
+  $("plan-tools").style.display = wps.length ? "" : "none";
+  const body = $("plan-body");
+  if (!route) {
+    body.innerHTML = `<div class="hint" style="padding-bottom:6px">${wps.length ? "Tik opnieuw op de kaart om het volgende punt toe te voegen." : "Tik op de kaart om je startpunt te kiezen."}</div>`;
+  } else {
+    const d = fmtDist(route.distance), samples = profile(route.points);
+    body.innerHTML = `<div class="stats">${stat("Afstand", d.v, d.u)}${stat("Stijging", route.hasEle ? nf(route.up) : "–", route.hasEle ? "m" : "")}${stat("Gesch. tijd", fmtDur(route.seconds))}</div>`
+      + (samples.length > 2 ? `<div style="margin-top:14px">${chartSVG(samples, 350, 92, "#E5482D")}</div>` : "")
+      + (route.failed ? `<div style="margin-top:10px;font-size:13px;color:var(--blaze)">De route kon niet worden berekend. Controleer je verbinding.</div>` : "")
+      + `<button class="btn-primary" id="plan-save" style="margin-top:14px">Wandeling bewaren</button>`;
+    $("plan-save").onclick = () => alertBox({ title: "Geef je wandeling een naam", input: "Naam", buttons: [
+      { label: "Annuleren" },
+      { label: "Bewaren", strong: true, action: name => {
+        addHike(name || "Wandeling " + fmtDate(new Date()), "planned", route.points);
+        setTimeout(() => alertBox({ title: "Bewaard in Mijn wandelingen", buttons: [{ label: "Verder plannen" }, { label: "Toon", strong: true, action: () => show("library") }] }), 350);
+      } }] });
+  }
+  $("plan-attr").style.bottom = ($("plan-panel").offsetHeight + 6) + "px";
+}
+$("plan-search").addEventListener("keydown", async e => {
+  if (e.key !== "Enter" || !e.target.value.trim()) return;
+  e.target.blur(); $("plan-search-busy").style.display = "";
+  try {
+    const data = await getJSON("api/geocode?q=" + encodeURIComponent(e.target.value.trim()));
+    const c = data.features[0].geometry.coordinates;
+    planMap.flyTo([c[1], c[0]], 13, { duration: 2.2 });
+  } catch (error) { alertBox({ title: "Plaats niet gevonden", message: "Probeer de naam van een plaats, streek of berg.", buttons: [{ label: "OK", strong: true }] }); }
+  $("plan-search-busy").style.display = "none";
+});
+
+// ---------- Mijn wandelingen ----------
+const KINDS = { planned: "Gepland", recorded: "Opgenomen", imported: "Geïmporteerd", trail: "Route" };
+function addHike(name, kind, points, walkedSeconds = null) {
+  const info = describe(points);
+  const hike = { id: Date.now() + Math.random(), name, kind, points, created: new Date(), ...info };
+  if (walkedSeconds != null) hike.seconds = walkedSeconds;
+  state.hikes.unshift(hike);
+  return hike;
+}
+function renderLibrary() {
+  const list = $("lib-list");
+  if (!state.hikes.length) {
+    list.innerHTML = `<div style="text-align:center;padding:70px 20px 24px">${blaze("#E5482D", 54)}<div style="font-family:var(--serif);font-weight:700;font-size:22px;margin-top:14px">Nog geen wandelingen</div><div class="hint" style="margin-top:10px">Plan een route, bewaar een route uit Ontdekken of importeer een GPX-bestand.</div></div>`;
+    return;
+  }
+  list.innerHTML = state.hikes.map((h, i) => {
+    const d = fmtDist(h.distance);
+    return `<button class="card row" data-hike="${i}" style="padding:12px">${thumbSVG(h.points, i * 3 + 1)}<div><div class="name">${esc(h.name)}</div><div class="sub" style="font-size:13px">${fmtDate(h.created)}</div>
+      <div class="meta"><b>${d.v} ${d.u}</b>${h.hasEle ? `<b>↗ ${nf(h.up)} m</b>` : ""}</div><div style="margin-top:6px"><span class="tag">${KINDS[h.kind]}</span></div></div>${chevron}</button>`;
+  }).join("");
+  list.querySelectorAll("[data-hike]").forEach(el => el.onclick = () => openHike(state.hikes[+el.dataset.hike]));
+}
+let hikeMap;
+function openHike(h) {
+  show("hike");
+  hikeMap = hikeMap || makeMap("hike-map", { dragging: true });
+  hikeMap.invalidateSize(); hikeMap.layers.clearLayers();
+  const color = h.kind === "recorded" ? "#2F7F8C" : "#E5482D";
+  routeLine(h.points, color).addTo(hikeMap.layers);
+  const first = h.points[0], last = h.points[h.points.length - 1];
+  L.marker(ll(first), { icon: pinIcon("A"), interactive: false }).addTo(hikeMap.layers);
+  if (dist(first, last) > 30) L.marker(ll(last), { icon: pinIcon("B"), interactive: false }).addTo(hikeMap.layers);
+  hikeMap.fitBounds(bounds(h.points), { padding: [26, 26], animate: false });
+  const d = fmtDist(h.distance), samples = profile(h.points), highest = Math.max(...h.points.map(p => p.ele ?? -Infinity));
+  $("hike-body").innerHTML = `<div><h2>${esc(h.name)}</h2><div style="margin-top:8px;display:flex;gap:8px;align-items:center"><span class="tag">${KINDS[h.kind]}</span><span class="note" style="font-size:13px">${fmtDate(h.created)}</span></div></div>
+    <div class="card" style="padding:16px"><div class="stats">${stat("Afstand", d.v, d.u)}${stat("Stijging", h.hasEle ? nf(h.up) : "–", h.hasEle ? "m" : "")}${stat(h.kind === "recorded" ? "Tijd" : "Gesch. tijd", fmtDur(h.seconds))}</div>
+      ${h.hasEle ? `<div class="stats" style="margin-top:16px">${stat("Daling", nf(h.down), "m").replace('class="v"', 'class="v" style="font-size:18px"')}${stat("Hoogste punt", nf(highest), "m").replace('class="v"', 'class="v" style="font-size:18px"')}<div class="stat"></div></div>` : ""}</div>
+    ${samples.length > 2 ? `<div class="card" style="padding:16px">${chartSVG(samples, 316, 130, color)}</div>` : ""}
+    ${h.kind !== "recorded" ? `<button class="btn-primary" id="hike-start">Start deze wandeling</button>` : ""}
+    <button class="btn-secondary">↓&nbsp; Kaart bewaren voor offline gebruik</button>
+    <button class="btn-secondary">↑&nbsp; Delen als GPX</button>`;
+  document.querySelector("#s-hike .scroll").scrollTop = 0;
+  const start = $("hike-start");
+  if (start) start.onclick = () => { state.followed = h; show("record"); };
+}
+
+// ---------- Ontdekken ----------
+const NETWORKS = { INT: ["Internationaal", "#E5482D"], NAT: ["Nationaal", "#E5482D"], REG: ["Regionaal", "#F0B54A"], LOC: ["Lokaal", "#9CC3C9"] };
+const discMap = makeMap("disc-map").setView([49.5, 9.5], 3.250);
+let discLoadedKey = null;
+const discKey = () => discMap.getBounds().toBBoxString();
+discMap.on("moveend", () => { $("disc-reload").style.display = (discKey() !== discLoadedKey || state.discSearch) ? "" : "none"; });
+$("disc-chips").innerHTML = Object.entries(NETWORKS).map(([k, v]) => `<button data-net="${k}">${v[0]}</button>`).join("");
+$("disc-chips").querySelectorAll("button").forEach(b => b.onclick = () => {
+  state.network = state.network === b.dataset.net ? null : b.dataset.net;
+  $("disc-chips").querySelectorAll("button").forEach(x => x.classList.toggle("on", x.dataset.net === state.network));
+  renderTrails();
+});
+async function loadTrails(url, isSearch) {
+  $("disc-results").innerHTML = `<div style="display:flex;justify-content:center;padding:40px"><div class="spinner"></div></div>`;
+  try { state.trails = (await getJSON(url)).results; state.discSearch = isSearch; renderTrails(); }
+  catch (error) { $("disc-results").innerHTML = `<div class="hint" style="text-align:center;padding:40px 10px">De routes konden niet worden geladen.</div>`; }
+}
+function loadArea() {
+  const b = discMap.getBounds(), sw = toMercator({ lat: b.getSouth(), lon: b.getWest() }), ne = toMercator({ lat: b.getNorth(), lon: b.getEast() });
+  discLoadedKey = discKey(); $("disc-reload").style.display = "none"; $("disc-search").value = "";
+  loadTrails(`api/trails/area?bbox=${[sw.x, sw.y, ne.x, ne.y].map(v => v.toFixed(0)).join(",")}`, false);
+}
+$("disc-reload").onclick = loadArea;
+$("disc-search").addEventListener("keydown", e => {
+  if (e.key !== "Enter") return;
+  e.target.blur();
+  const q = e.target.value.trim();
+  q ? loadTrails("api/trails/search?query=" + encodeURIComponent(q), true) : loadArea();
+});
+const trailTitle = t => t.name || t.ref || "#" + t.id;
+function renderTrails() {
+  const items = state.trails.filter(t => !state.network || t.group === state.network);
+  if (!items.length) { $("disc-results").innerHTML = `<div class="hint" style="text-align:center;padding:40px 10px">Geen routes gevonden. Verschuif de kaart, pas het filter aan of zoek op naam.</div>`; return; }
+  $("disc-results").innerHTML = items.map((t, i) => {
+    const net = NETWORKS[t.group], it = t.itinerary && t.itinerary.length >= 2 ? `${t.itinerary[0]} – ${t.itinerary[t.itinerary.length - 1]}` : "";
+    return `<button class="card row" data-trail="${t.id}">${blaze(net ? net[1] : "#E5482D")}<div><div class="name">${esc(trailTitle(t))}</div>${it ? `<div class="sub">${esc(it)}</div>` : ""}
+      <div class="meta">${t.ref && t.ref !== trailTitle(t) ? `<b>${esc(t.ref)}</b>` : ""}${net ? `<span style="color:var(--ink-soft)">${net[0]}</span>` : ""}</div></div>${chevron}</button>`;
+  }).join("");
+  $("disc-results").querySelectorAll("[data-trail]").forEach(el => el.onclick = () => openTrail(items.find(t => t.id === +el.dataset.trail)));
+}
+function collectWays(node, out) {
+  if (node.geometry && node.geometry.coordinates) { const pts = node.geometry.coordinates.map(c => fromMercator(c[0], c[1])); if (pts.length > 1) out.push(pts); return; }
+  for (const key of ["main", "ways", "forward"]) if (Array.isArray(node[key])) node[key].forEach(child => collectWays(child, out));
+}
+function stitch(ways) {
+  const segs = [];
+  for (const way of ways) {
+    const cur = segs[segs.length - 1], last = cur && cur[cur.length - 1];
+    if (!last) segs.push(way.slice());
+    else if (dist(last, way[0]) <= 5) cur.push(...way.slice(1));
+    else if (dist(last, way[way.length - 1]) <= 5) cur.push(...way.slice().reverse().slice(1));
+    else segs.push(way.slice());
+  }
+  return segs;
+}
+let trailMap;
+async function openTrail(t) {
+  show("trail");
+  trailMap = trailMap || makeMap("trail-map");
+  trailMap.invalidateSize(); trailMap.layers.clearLayers();
+  const net = NETWORKS[t.group], it = t.itinerary && t.itinerary.length >= 2 ? `${t.itinerary[0]} – ${t.itinerary[t.itinerary.length - 1]}` : "";
+  const head = `<div style="display:flex;gap:14px;align-items:flex-start"><span style="margin-top:6px">${blaze(net ? net[1] : "#E5482D", 44)}</span><div><h2>${esc(trailTitle(t))}</h2>${it ? `<div class="hint" style="margin-top:6px;font-size:16px">${esc(it)}</div>` : ""}</div></div>`;
+  $("trail-body").innerHTML = head + `<div style="display:flex;justify-content:center;padding:30px"><div class="spinner"></div></div>`;
+  document.querySelector("#s-trail .scroll").scrollTop = 0;
+  let detail;
+  try { detail = await getJSON("api/trails/detail/" + t.id); }
+  catch (error) { $("trail-body").innerHTML = head + `<div class="hint" style="text-align:center;padding:30px">De route kon niet worden geladen.</div>`; return; }
+  const ways = []; collectWays(detail.route || {}, ways);
+  const segments = stitch(ways), all = segments.flat();
+  segments.forEach(s => routeLine(s).addTo(trailMap.layers));
+  if (all.length) trailMap.fitBounds(bounds(all), { padding: [22, 22], animate: false });
+  const length = detail.official_length || (detail.route && detail.route.length) || lengthOf(all), d = fmtDist(length);
+  const fact = (label, value) => value ? `<div><span>${label}</span>${esc(value)}</div>` : "";
+  $("trail-body").innerHTML = head
+    + `<div class="card" style="padding:16px"><div class="stats">${stat("Afstand", d.v, d.u)}${stat("Stijging", "–")}${stat("Gesch. tijd", fmtDur(hikingSeconds(length, 0, 0)))}</div></div>`
+    + `<div class="card facts">${fact("Netwerk", net && net[0])}${fact("Markering", detail.ref)}${fact("Symbool", detail.symbol_description)}${fact("Beheerd door", detail.operator)}${fact("Traject", typeof detail.description === "string" ? detail.description : "")}</div>`
+    + `<button class="btn-primary" id="trail-save">Bewaren in Mijn wandelingen</button><div class="note">Routegegevens © OpenStreetMap-bijdragers, via Waymarked Trails.</div>`;
+  $("trail-save").onclick = () => {
+    addHike(trailTitle(t), "trail", all);
+    const b = $("trail-save"); b.className = "btn-secondary"; b.textContent = "Toon in Mijn wandelingen"; b.onclick = () => show("library");
+  };
+}
+
+// ---------- Opnemen ----------
+let recordMap, recTimer = null;
+const meIcon = L.divIcon({ className: "", html: `<div class="me"></div>`, iconSize: [20, 20], iconAnchor: [10, 10] });
+function renderRecord() {
+  recordMap = recordMap || makeMap("record-map").setView([49.5, 9.5], 4);
+  recordMap.invalidateSize();
+  const f = state.followed, rec = state.rec;
+  $("rec-pill").style.display = f ? "" : "none";
+  if (f) $("rec-name").textContent = f.name;
+  if (!rec) {
+    recordMap.layers.clearLayers();
+    if (f) { routeLine(f.points).addTo(recordMap.layers); recordMap.fitBounds(bounds(f.points), { padding: [30, 30], animate: false });
+      L.marker(ll(f.points[0]), { icon: meIcon, interactive: false }).addTo(recordMap.layers); }
+    setRecStats(0, 0, 0);
+    $("rec-controls").innerHTML = `<button class="btn-blaze" id="rec-start">Start wandeling</button>`;
+    $("rec-start").onclick = startRecording;
+  }
+}
+function setRecStats(distance, seconds, up) {
+  const d = fmtDist(distance);
+  $("rec-dist").innerHTML = `${d.v}<small>${d.u}</small>`;
+  $("rec-time").textContent = fmtWatch(seconds);
+  $("rec-asc").innerHTML = `${nf(up)}<small>m</small>`;
+}
+// The prototype has no GPS: it walks the followed route itself, much faster than real time.
+function startRecording() {
+  const f = state.followed;
+  if (!f) return alertBox({ title: "Kies eerst een wandeling", message: "In dit prototype volgt de opname een bewaarde route. Open een wandeling en tik op Start deze wandeling.", buttons: [{ label: "OK", strong: true }] });
+  const cum = [0]; for (let i = 1; i < f.points.length; i++) cum.push(cum[i - 1] + dist(f.points[i - 1], f.points[i]));
+  const total = cum[cum.length - 1], pace = hikingSeconds(total, f.up, f.down) / total;
+  const rec = state.rec = { index: 0, walked: 0, paused: false, track: [f.points[0]], cum, total, pace, speed: total / 14 };
+  recordMap.layers.clearLayers();
+  routeLine(f.points).addTo(recordMap.layers);
+  rec.line = routeLine(rec.track, "#2F7F8C").addTo(recordMap.layers);
+  rec.me = L.marker(ll(f.points[0]), { icon: meIcon, interactive: false, zIndexOffset: 1000 }).addTo(recordMap.layers);
+  recordMap.flyTo(ll(f.points[0]), 15, { duration: 1.2 });
+  recControls();
+  let lastTick = performance.now();
+  recTimer = setInterval(() => {
+    const now = performance.now(), dt = (now - lastTick) / 1000; lastTick = now;
+    if (rec.paused) return;
+    rec.walked = Math.min(rec.walked + rec.speed * dt, rec.total);
+    while (rec.index < f.points.length - 1 && rec.cum[rec.index + 1] <= rec.walked) rec.track.push(f.points[++rec.index]);
+    const here = f.points[rec.index];
+    rec.line.setLatLngs(rec.track.map(ll)); rec.me.setLatLng(ll(here));
+    recordMap.panTo(ll(here), { animate: true, duration: .25, easeLinearity: 1 });
+    setRecStats(rec.walked, rec.walked * rec.pace, gain(rec.track, 5).up);
+    if (rec.walked >= rec.total) { rec.paused = true; recControls(); }
+  }, 100);
+}
+function recControls() {
+  const rec = state.rec, box = $("rec-controls");
+  if (!rec.paused) {
+    box.innerHTML = `<button class="btn-round" id="rec-pause" aria-label="Pauze"><svg width="30" height="30" viewBox="0 0 24 24" fill="#fff"><rect x="5" y="4" width="5" height="16" rx="1.2"/><rect x="14" y="4" width="5" height="16" rx="1.2"/></svg></button>`;
+    $("rec-pause").onclick = () => { rec.paused = true; recControls(); };
+  } else {
+    box.innerHTML = `<button class="btn-blaze" id="rec-resume" style="font-family:var(--sans);font-size:16px">▶&nbsp; Hervatten</button><button class="btn-dark" id="rec-finish">⚑&nbsp; Afronden</button>`;
+    $("rec-resume").onclick = () => { if (rec.walked < rec.total) { rec.paused = false; recControls(); } };
+    $("rec-finish").onclick = () => alertBox({ title: "Deze wandeling bewaren", message: "Geef je wandeling een naam om ze terug te vinden in Mijn wandelingen.", input: "Naam", buttons: [
+      { label: "Verder opnemen" },
+      { label: "Bewaren", strong: true, action: name => {
+        clearInterval(recTimer);
+        addHike(name || state.followed.name, "recorded", rec.track, rec.walked * rec.pace);
+        state.rec = null; state.followed = null; show("library");
+      } }] });
+  }
+}
+
+// ---------- Presentation helpers ----------
+const touch = $("touch");
+addEventListener("mousemove", e => { touch.style.left = e.clientX / ZOOM + "px"; touch.style.top = e.clientY / ZOOM + "px"; touch.classList.add("on"); });
+addEventListener("mousedown", () => touch.classList.add("down"));
+addEventListener("mouseup", () => touch.classList.remove("down"));
+window.setCaption = text => { $("caption").querySelector(".main").textContent = text; };
+window.hike = { state, maps, show };
+renderPlan();
+</script>
+</body>
+</html>

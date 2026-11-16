@@ -19,3 +19,6 @@ Packages/
 
 # Secrets (API keys) - never commit
 Config/Secrets.xcconfig
+
+# Web prototype cache
+Prototype/.cache/
