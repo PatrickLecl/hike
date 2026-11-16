@@ -1,0 +1,15 @@
+// Build configuration for the Hike app target (Debug and Release).
+//
+// ORS_API_KEY is the API key for openrouteservice.org, used to calculate
+// hiking routes. It ends up in Info.plist as "ORSAPIKey".
+//
+// Do NOT put the real key in this file. Create Config/Secrets.xcconfig
+// (it is gitignored, so the key never reaches GitHub) containing one line:
+//
+//     ORS_API_KEY = <your key>
+//
+// Without a key the app still builds and falls back to Apple walking routes.
+
+ORS_API_KEY =
+
+#include? "Secrets.xcconfig"

@@ -1,0 +1,1158 @@
+{
+  "sourceLanguage": "en",
+  "strings": {
+    "Apple Maps": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apple Kaarten"
+          }
+        }
+      }
+    },
+    "Ascent": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stijging"
+          }
+        }
+      }
+    },
+    "Back to start": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Terug naar start"
+          }
+        }
+      }
+    },
+    "Base": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Basis"
+          }
+        }
+      }
+    },
+    "Cancel": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Annuleren"
+          }
+        }
+      }
+    },
+    "Check your connection and try again.": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Controleer je verbinding en probeer het opnieuw."
+          }
+        }
+      }
+    },
+    "Clear route": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Route wissen"
+          }
+        }
+      }
+    },
+    "Clear search": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zoekopdracht wissen"
+          }
+        }
+      }
+    },
+    "Could not open this file": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dit bestand kon niet worden geopend"
+          }
+        }
+      }
+    },
+    "Delete": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verwijderen"
+          }
+        }
+      }
+    },
+    "Delete all offline maps?": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alle offline kaarten verwijderen?"
+          }
+        }
+      }
+    },
+    "Delete offline maps": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Offline kaarten verwijderen"
+          }
+        }
+      }
+    },
+    "Delete this hike?": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deze wandeling verwijderen?"
+          }
+        }
+      }
+    },
+    "Descent": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Daling"
+          }
+        }
+      }
+    },
+    "Discard": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Weggooien"
+          }
+        }
+      }
+    },
+    "Discard recording": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opname weggooien"
+          }
+        }
+      }
+    },
+    "Discard this recording?": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deze opname weggooien?"
+          }
+        }
+      }
+    },
+    "Discover": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ontdekken"
+          }
+        }
+      }
+    },
+    "Distance": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Afstand"
+          }
+        }
+      }
+    },
+    "Done": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gereed"
+          }
+        }
+      }
+    },
+    "Downloading map…": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kaart downloaden…"
+          }
+        }
+      }
+    },
+    "Elevation": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hoogte"
+          }
+        }
+      }
+    },
+    "Elevation profile": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hoogteprofiel"
+          }
+        }
+      }
+    },
+    "Est. time": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gesch. tijd"
+          }
+        }
+      }
+    },
+    "Finish": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Afronden"
+          }
+        }
+      }
+    },
+    "Give your hike a name to find it back in My hikes.": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Geef je wandeling een naam om ze terug te vinden in Mijn wandelingen."
+          }
+        }
+      }
+    },
+    "h": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "u"
+          }
+        }
+      }
+    },
+    "Highest point": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hoogste punt"
+          }
+        }
+      }
+    },
+    "Hike": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wandeling"
+          }
+        }
+      }
+    },
+    "Hike needs your location to record a hike. You can allow it in Settings.": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hike heeft je locatie nodig om een wandeling op te nemen. Je kunt dit toestaan in Instellingen."
+          }
+        }
+      }
+    },
+    "Import GPX file": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "GPX-bestand importeren"
+          }
+        }
+      }
+    },
+    "Imported": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Geïmporteerd"
+          }
+        }
+      }
+    },
+    "International": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Internationaal"
+          }
+        }
+      }
+    },
+    "Keep planning": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verder plannen"
+          }
+        }
+      }
+    },
+    "Keep recording": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verder opnemen"
+          }
+        }
+      }
+    },
+    "Local": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lokaal"
+          }
+        }
+      }
+    },
+    "Location access is off": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Locatietoegang staat uit"
+          }
+        }
+      }
+    },
+    "Maintained by": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Beheerd door"
+          }
+        }
+      }
+    },
+    "Map": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kaart"
+          }
+        }
+      }
+    },
+    "Map and trail data": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kaart- en routegegevens"
+          }
+        }
+      }
+    },
+    "Map style": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kaartstijl"
+          }
+        }
+      }
+    },
+    "Maps you have viewed and maps saved with a hike are kept on this iPhone.": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kaarten die je hebt bekeken en kaarten die je bij een wandeling hebt bewaard, blijven op deze iPhone staan."
+          }
+        }
+      }
+    },
+    "Maps, trails and routes are built on OpenStreetMap, made by volunteers around the world.": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kaarten, wandelroutes en routes zijn gebaseerd op OpenStreetMap, gemaakt door vrijwilligers over de hele wereld."
+          }
+        }
+      }
+    },
+    "More": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Meer"
+          }
+        }
+      }
+    },
+    "Move the map, change the filter or search by name.": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verschuif de kaart, pas het filter aan of zoek op naam."
+          }
+        }
+      }
+    },
+    "My hikes": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mijn wandelingen"
+          }
+        }
+      }
+    },
+    "My location": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mijn locatie"
+          }
+        }
+      }
+    },
+    "Name": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Naam"
+          }
+        }
+      }
+    },
+    "Name your hike": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Geef je wandeling een naam"
+          }
+        }
+      }
+    },
+    "National": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nationaal"
+          }
+        }
+      }
+    },
+    "Network": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Netwerk"
+          }
+        }
+      }
+    },
+    "No hikes yet": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nog geen wandelingen"
+          }
+        }
+      }
+    },
+    "No trails found": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Geen routes gevonden"
+          }
+        }
+      }
+    },
+    "No walking route found between these points. Showing a straight line instead.": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Geen wandelroute gevonden tussen deze punten. Er wordt een rechte lijn getoond."
+          }
+        }
+      }
+    },
+    "Offline": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Offline"
+          }
+        }
+      }
+    },
+    "OK": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OK"
+          }
+        }
+      }
+    },
+    "Open Settings": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open Instellingen"
+          }
+        }
+      }
+    },
+    "openrouteservice": {
+      "shouldTranslate": false
+    },
+    "OpenStreetMap": {
+      "shouldTranslate": false
+    },
+    "OpenTopoMap": {
+      "shouldTranslate": false
+    },
+    "Parts of the map may be missing offline. Try again with a better connection.": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Offline kunnen delen van de kaart ontbreken. Probeer het opnieuw met een betere verbinding."
+          }
+        }
+      }
+    },
+    "Pause": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pauze"
+          }
+        }
+      }
+    },
+    "Place not found": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Plaats niet gevonden"
+          }
+        }
+      }
+    },
+    "Plan": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Plannen"
+          }
+        }
+      }
+    },
+    "Plan a hike": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Plan een wandeling"
+          }
+        }
+      }
+    },
+    "Plan a route, save a trail from Discover or import a GPX file.": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Plan een route, bewaar een route uit Ontdekken of importeer een GPX-bestand."
+          }
+        }
+      }
+    },
+    "Planned": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gepland"
+          }
+        }
+      }
+    },
+    "Record": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opnemen"
+          }
+        }
+      }
+    },
+    "Recorded": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opgenomen"
+          }
+        }
+      }
+    },
+    "Regional": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Regionaal"
+          }
+        }
+      }
+    },
+    "Rename": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Naam wijzigen"
+          }
+        }
+      }
+    },
+    "Rename hike": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Naam van wandeling wijzigen"
+          }
+        }
+      }
+    },
+    "Resume": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hervatten"
+          }
+        }
+      }
+    },
+    "Route": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Traject"
+          }
+        }
+      }
+    },
+    "Route planning": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Routeplanning"
+          }
+        }
+      }
+    },
+    "Routes follow hiking paths and include elevation.": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Routes volgen wandelpaden en bevatten hoogtegegevens."
+          }
+        }
+      }
+    },
+    "Routes follow walking directions from Apple Maps and have no elevation data.": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Routes volgen de wandelaanwijzingen van Apple Kaarten en bevatten geen hoogtegegevens."
+          }
+        }
+      }
+    },
+    "Routing": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Routes"
+          }
+        }
+      }
+    },
+    "Satellite": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Satelliet"
+          }
+        }
+      }
+    },
+    "Save": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bewaren"
+          }
+        }
+      }
+    },
+    "Save hike": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wandeling bewaren"
+          }
+        }
+      }
+    },
+    "Save map for offline use": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kaart bewaren voor offline gebruik"
+          }
+        }
+      }
+    },
+    "Save this hike": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deze wandeling bewaren"
+          }
+        }
+      }
+    },
+    "Save to My hikes": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bewaren in Mijn wandelingen"
+          }
+        }
+      }
+    },
+    "Saved to My hikes": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bewaard in Mijn wandelingen"
+          }
+        }
+      }
+    },
+    "Search place": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zoek een plaats"
+          }
+        }
+      }
+    },
+    "Search trails": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zoek wandelroutes"
+          }
+        }
+      }
+    },
+    "Settings": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Instellingen"
+          }
+        }
+      }
+    },
+    "Share as GPX": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delen als GPX"
+          }
+        }
+      }
+    },
+    "Show": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Toon"
+          }
+        }
+      }
+    },
+    "Show in My hikes": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Toon in Mijn wandelingen"
+          }
+        }
+      }
+    },
+    "Some map tiles could not be downloaded": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Een deel van de kaart kon niet worden gedownload"
+          }
+        }
+      }
+    },
+    "Standard": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Standaard"
+          }
+        }
+      }
+    },
+    "Start hike": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Start wandeling"
+          }
+        }
+      }
+    },
+    "Start this hike": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Start deze wandeling"
+          }
+        }
+      }
+    },
+    "Stop following this route": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deze route niet meer volgen"
+          }
+        }
+      }
+    },
+    "Stored map data": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bewaarde kaartgegevens"
+          }
+        }
+      }
+    },
+    "Symbol": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Symbool"
+          }
+        }
+      }
+    },
+    "Tap the map again to add the next point.": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tik opnieuw op de kaart om het volgende punt toe te voegen."
+          }
+        }
+      }
+    },
+    "Tap the map to set your starting point.": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tik op de kaart om je startpunt te kiezen."
+          }
+        }
+      }
+    },
+    "The file does not contain a route Hike can read.": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Het bestand bevat geen route die Hike kan lezen."
+          }
+        }
+      }
+    },
+    "The route could not be calculated. Check your connection.": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "De route kon niet worden berekend. Controleer je verbinding."
+          }
+        }
+      }
+    },
+    "The route service reported a problem.": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "De routedienst meldde een probleem."
+          }
+        }
+      }
+    },
+    "Time": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tijd"
+          }
+        }
+      }
+    },
+    "Topographic": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Topografisch"
+          }
+        }
+      }
+    },
+    "Total ascent": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Totale stijging"
+          }
+        }
+      }
+    },
+    "Trail": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Route"
+          }
+        }
+      }
+    },
+    "Trail could not be loaded": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "De route kon niet worden geladen"
+          }
+        }
+      }
+    },
+    "Trail data © OpenStreetMap contributors, via Waymarked Trails.": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Routegegevens © OpenStreetMap-bijdragers, via Waymarked Trails."
+          }
+        }
+      }
+    },
+    "Trails could not be loaded": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "De routes konden niet worden geladen"
+          }
+        }
+      }
+    },
+    "Trails in this area": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Routes in dit gebied"
+          }
+        }
+      }
+    },
+    "Try a town, region or mountain name.": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Probeer de naam van een plaats, streek of berg."
+          }
+        }
+      }
+    },
+    "Undo last point": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Laatste punt ongedaan maken"
+          }
+        }
+      }
+    },
+    "Version": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Versie"
+          }
+        }
+      }
+    },
+    "Waymark": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Markering"
+          }
+        }
+      }
+    },
+    "Waymarked Trails": {
+      "shouldTranslate": false
+    },
+    "Website": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Website"
+          }
+        }
+      }
+    },
+    "Your hikes are kept. Maps are downloaded again when you are online.": {
+      "localizations": {
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Je wandelingen blijven bewaard. Kaarten worden opnieuw gedownload zodra je online bent."
+          }
+        }
+      }
+    }
+  },
+  "version": "1.0"
+}
