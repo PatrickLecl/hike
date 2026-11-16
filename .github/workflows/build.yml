@@ -1,0 +1,44 @@
+name: Build
+
+on:
+  push:
+    branches: [main, "claude/**"]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: macos-15
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Xcode version
+        run: xcodebuild -version
+
+      - name: Unit tests (swift test)
+        run: swift test
+
+      - name: Build for the iPhone simulator
+        run: |
+          set -o pipefail
+          xcodebuild \
+            -project Hike.xcodeproj \
+            -scheme Hike \
+            -configuration Debug \
+            -sdk iphonesimulator \
+            -destination 'generic/platform=iOS Simulator' \
+            CODE_SIGNING_ALLOWED=NO \
+            build > build.log 2>&1 || {
+              echo "::group::Full log (last 200 lines)"; tail -n 200 build.log; echo "::endgroup::"
+              echo "=== ERRORS ==="
+              grep -E "error:|error :|BUILD FAILED" build.log | sort -u | head -n 300
+              exit 1
+            }
+          echo "=== WARNINGS ==="
+          grep -E "warning:" build.log | grep -v "appintentsmetadataprocessor" | sort -u | head -n 200 || true
+          tail -n 3 build.log
